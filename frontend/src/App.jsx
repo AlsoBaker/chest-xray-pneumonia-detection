@@ -31,7 +31,7 @@ export default function App() {
     try {
       const formData = new FormData()
       formData.append("file", file)
-      const res = await axios.post("https://chest-xray-pneumonia-detection-04c6.onrender.com/predict", formData)
+      const res = await axios.post("https://vijayesh684-chest-xray-api.hf.space/predict", formData)
       setResult(res.data)
     } catch (err) {
       alert("Error: " + (err.response?.data?.error || err.message))
