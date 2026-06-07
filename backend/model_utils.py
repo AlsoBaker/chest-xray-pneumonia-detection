@@ -9,14 +9,18 @@ import numpy as np
 import cv2
 import tensorflow as tf
 from tensorflow.keras.models import load_model
+from huggingface_hub import hf_hub_download
 import base64
 
 # ── Load model + threshold once at startup ─────────────────
-BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "best_model_phase2.keras")
+BASE_DIR       = os.path.dirname(os.path.abspath(__file__))
 THRESHOLD_PATH = os.path.join(BASE_DIR, "optimal_threshold.json")
 
-print("Loading model...")
+print("Loading model from Hugging Face Hub...")
+MODEL_PATH = hf_hub_download(
+    repo_id="vijayesh684/chest-xray-densenet121",
+    filename="best_model_phase2.keras"
+)
 model = load_model(MODEL_PATH)
 print("✓ Model loaded")
 
@@ -32,15 +36,11 @@ def preprocess_image(img_bytes):
     Convert raw image bytes → normalized tensor
     Returns: (original_rgb, preprocessed_batch)
     """
-    # Decode bytes to numpy array
     nparr = np.frombuffer(img_bytes, np.uint8)
     img   = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     img   = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    # Resize for display
-    original = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
-
-    # Normalize for model
+    original       = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
     img_normalized = original / 255.0
     img_batch      = np.expand_dims(img_normalized, 0).astype(np.float32)
 
@@ -67,11 +67,11 @@ def get_gradcam_heatmap(img_batch):
     with tf.GradientTape() as tape:
         conv_outputs = base_model(img_tensor, training=False)
         tape.watch(conv_outputs)
-        x = model.get_layer("global_average_pooling2d")(conv_outputs)
-        x = model.get_layer("batch_normalization")(x, training=False)
-        x = model.get_layer("dense")(x)
-        x = model.get_layer("dropout")(x, training=False)
-        predictions  = model.get_layer("dense_1")(x)
+        x             = model.get_layer("global_average_pooling2d")(conv_outputs)
+        x             = model.get_layer("batch_normalization")(x, training=False)
+        x             = model.get_layer("dense")(x)
+        x             = model.get_layer("dropout")(x, training=False)
+        predictions   = model.get_layer("dense_1")(x)
         class_channel = predictions[:, 0]
 
     grads        = tape.gradient(class_channel, conv_outputs)
@@ -111,15 +111,10 @@ def analyze_xray(img_bytes):
     Full pipeline: bytes → prediction + Grad-CAM
     Returns dict with all results for React frontend
     """
-    # Preprocess
-    original, img_batch = preprocess_image(img_bytes)
-
-    # Predict
+    original, img_batch      = preprocess_image(img_bytes)
     score, label, confidence = predict(img_batch)
-
-    # Grad-CAM
-    heatmap     = get_gradcam_heatmap(img_batch)
-    superimposed = overlay_gradcam(original, heatmap)
+    heatmap                  = get_gradcam_heatmap(img_batch)
+    superimposed             = overlay_gradcam(original, heatmap)
 
     return {
         "label"      : label,
