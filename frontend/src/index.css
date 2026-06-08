@@ -239,3 +239,131 @@ body {
   border-color: #60a5fa;
   color: #60a5fa;
 }
+
+/* ── Add these styles to the bottom of your index.css ── */
+
+/* Main layout — side by side */
+.main-layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Sample panel */
+.sample-panel {
+  width: 220px;
+  flex-shrink: 0;
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #334155;
+}
+
+.sample-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin: 0 0 0.25rem 0;
+}
+
+.sample-subtitle {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0 0 1rem 0;
+}
+
+.sample-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sample-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.sample-card:hover {
+  transform: scale(1.02);
+}
+
+.sample-card.pneumonia {
+  border-color: #ef444466;
+}
+
+.sample-card.pneumonia:hover {
+  border-color: #ef4444;
+}
+
+.sample-card.normal {
+  border-color: #22c55e66;
+}
+
+.sample-card.normal:hover {
+  border-color: #22c55e;
+}
+
+.sample-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(20%);
+}
+
+.sample-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.sample-card.pneumonia .sample-badge {
+  background: #ef4444;
+  color: white;
+}
+
+.sample-card.normal .sample-badge {
+  background: #22c55e;
+  color: white;
+}
+
+.sample-name {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  padding: 4px 6px;
+  background: #0f172a;
+}
+
+/* Responsive — stack on mobile */
+@media (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .sample-panel {
+    width: 100%;
+  }
+
+  .sample-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .sample-card {
+    width: calc(50% - 0.375rem);
+  }
+}
