@@ -1,30 +1,41 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useMemo } from "react"
 import axios from "axios"
 import "./index.css"
 
-// Public chest X-ray sample images (from NIH/Kaggle open datasets)
-const SAMPLE_IMAGES = [
-  {
-    label: "PNEUMONIA",
-    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Pneumonia_x-ray.jpg/440px-Pneumonia_x-ray.jpg",
-    name: "Pneumonia Sample 1"
-  },
-  {
-    label: "PNEUMONIA",
-    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Chest_X-ray_in_influenza_and_Haemophilus_influenzae_-_annotated.jpg/480px-Chest_X-ray_in_influenza_and_Haemophilus_influenzae_-_annotated.jpg",
-    name: "Pneumonia Sample 2"
-  },
-  {
-    label: "NORMAL",
-    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Normal_posteroanterior_%28PA%29_chest_radiograph_%28X-ray%29.jpg/440px-Normal_posteroanterior_%28PA%29_chest_radiograph_%28X-ray%29.jpg",
-    name: "Normal Sample 1"
-  },
-  {
-    label: "NORMAL",
-    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Chest_Xray_PA_3-8-2010.png/440px-Chest_Xray_PA_3-8-2010.png",
-    name: "Normal Sample 2"
-  }
+// ── Pool of 20 images (10 pneumonia + 10 normal) — add all to public/samples/ ──
+const SAMPLE_POOL = [
+  { label: "PNEUMONIA", path: "/samples/pneumonia1.jpg",  name: "Pneumonia Sample 1"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia2.jpg",  name: "Pneumonia Sample 2"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia3.jpg",  name: "Pneumonia Sample 3"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia4.jpg",  name: "Pneumonia Sample 4"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia5.jpg",  name: "Pneumonia Sample 5"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia6.jpg",  name: "Pneumonia Sample 6"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia7.jpg",  name: "Pneumonia Sample 7"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia8.jpg",  name: "Pneumonia Sample 8"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia9.jpg",  name: "Pneumonia Sample 9"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia10.jpg", name: "Pneumonia Sample 10" },
+  { label: "NORMAL",    path: "/samples/normal1.jpg",     name: "Normal Sample 1"     },
+  { label: "NORMAL",    path: "/samples/normal2.jpg",     name: "Normal Sample 2"     },
+  { label: "NORMAL",    path: "/samples/normal3.jpg",     name: "Normal Sample 3"     },
+  { label: "NORMAL",    path: "/samples/normal4.jpg",     name: "Normal Sample 4"     },
+  { label: "NORMAL",    path: "/samples/normal5.jpg",     name: "Normal Sample 5"     },
+  { label: "NORMAL",    path: "/samples/normal6.jpg",     name: "Normal Sample 6"     },
+  { label: "NORMAL",    path: "/samples/normal7.jpg",     name: "Normal Sample 7"     },
+  { label: "NORMAL",    path: "/samples/normal8.jpg",     name: "Normal Sample 8"     },
+  { label: "NORMAL",    path: "/samples/normal9.jpg",     name: "Normal Sample 9"     },
+  { label: "NORMAL",    path: "/samples/normal10.jpg",    name: "Normal Sample 10"    },
+  { label: "NORMAL",    path: "/samples/normal5.jpg",     name: "Normal Sample 5"     },
+  { label: "NORMAL",    path: "/samples/normal6.jpg",     name: "Normal Sample 6"     },
+  { label: "NORMAL",    path: "/samples/normal7.jpg",     name: "Normal Sample 7"     },
+  { label: "NORMAL",    path: "/samples/normal8.jpg",     name: "Normal Sample 8"     },
+  { label: "NORMAL",    path: "/samples/normal9.jpg",     name: "Normal Sample 9"     },
+  { label: "NORMAL",    path: "/samples/normal10.jpg",    name: "Normal Sample 10"    },
 ]
+
+// Pick 8 random samples — recalculated once per page load
+function pickRandom(pool, n = 8) {
+  return [...pool].sort(() => Math.random() - 0.5).slice(0, n)
+}
 
 export default function App() {
   const [file, setFile]         = useState(null)
@@ -33,6 +44,9 @@ export default function App() {
   const [loading, setLoading]   = useState(false)
   const [dragging, setDragging] = useState(false)
   const inputRef                = useRef(null)
+
+  // Random 4 samples, fixed for this page session
+  const displayedSamples = useMemo(() => pickRandom(SAMPLE_POOL, 8), [])
 
   // ── File handling ──────────────────────────────────────────
   const handleFile = (f) => {
@@ -48,18 +62,18 @@ export default function App() {
     handleFile(e.dataTransfer.files[0])
   }
 
-  // ── Load sample image ──────────────────────────────────────
+  // ── Load sample image (local public/ files — no CORS issues) ──
   const loadSample = async (sample) => {
     setResult(null)
-    setPreview(sample.url)
+    setPreview(sample.path)
     setLoading(true)
     try {
-      const res  = await fetch(sample.url)
+      const res  = await fetch(sample.path)
       const blob = await res.blob()
       const f    = new File([blob], sample.name + ".jpg", { type: "image/jpeg" })
       setFile(f)
     } catch {
-      alert("Failed to load sample image")
+      alert("Failed to load sample image. Make sure images exist in public/samples/")
     } finally {
       setLoading(false)
     }
@@ -104,26 +118,7 @@ export default function App() {
       </div>
 
       <div className="main-layout">
-        {/* ── Sample Images Panel ── */}
-        <div className="sample-panel">
-          <h3 className="sample-title">🩻 Try a Sample</h3>
-          <p className="sample-subtitle">Click any image to load it</p>
-          <div className="sample-grid">
-            {SAMPLE_IMAGES.map((sample, i) => (
-              <div
-                key={i}
-                className={`sample-card ${sample.label.toLowerCase()}`}
-                onClick={() => loadSample(sample)}
-              >
-                <img src={sample.url} alt={sample.name} />
-                <div className="sample-badge">{sample.label}</div>
-                <div className="sample-name">{sample.name}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Main Content ── */}
+        {/* ── Main Content (LEFT) ── */}
         <div className="main-content">
           {/* Upload Zone */}
           {!result && (
@@ -154,7 +149,7 @@ export default function App() {
                 <>
                   <div className="icon">🩻</div>
                   <h3>Drop your chest X-ray here</h3>
-                  <p>or click a sample on the left</p>
+                  <p>or click a sample on the right</p>
                   <p style={{ fontSize: "0.8rem", color: "#64748b" }}>Supports PNG, JPG, JPEG</p>
                 </>
               )}
@@ -253,6 +248,25 @@ export default function App() {
               </button>
             </>
           )}
+        </div>
+
+        {/* ── Sample Images Panel (RIGHT) ── */}
+        <div className="sample-panel">
+          <h3 className="sample-title">🩻 Try a Sample</h3>
+          <p className="sample-subtitle">Click any image to load it</p>
+          <div className="sample-grid">
+            {displayedSamples.map((sample, i) => (
+              <div
+                key={i}
+                className={`sample-card ${sample.label.toLowerCase()}`}
+                onClick={() => loadSample(sample)}
+              >
+                <img src={sample.path} alt={sample.name} />
+                <div className="sample-badge">{sample.label}</div>
+                <div className="sample-name">{sample.name}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
