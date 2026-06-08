@@ -2,7 +2,7 @@ import { useState, useRef, useMemo } from "react"
 import axios from "axios"
 import "./index.css"
 
-// ── Pool of 20 images (10 pneumonia + 10 normal) — add all to public/samples/ ──
+// ── Pool of 20 images (10 pneumonia + 10 normal) — stored in public/samples/ ──
 const SAMPLE_POOL = [
   { label: "PNEUMONIA", path: "/samples/pneumonia1.jpg",  name: "Pneumonia Sample 1"  },
   { label: "PNEUMONIA", path: "/samples/pneumonia2.jpg",  name: "Pneumonia Sample 2"  },
@@ -24,16 +24,10 @@ const SAMPLE_POOL = [
   { label: "NORMAL",    path: "/samples/normal8.jpg",     name: "Normal Sample 8"     },
   { label: "NORMAL",    path: "/samples/normal9.jpg",     name: "Normal Sample 9"     },
   { label: "NORMAL",    path: "/samples/normal10.jpg",    name: "Normal Sample 10"    },
-  { label: "NORMAL",    path: "/samples/normal5.jpg",     name: "Normal Sample 5"     },
-  { label: "NORMAL",    path: "/samples/normal6.jpg",     name: "Normal Sample 6"     },
-  { label: "NORMAL",    path: "/samples/normal7.jpg",     name: "Normal Sample 7"     },
-  { label: "NORMAL",    path: "/samples/normal8.jpg",     name: "Normal Sample 8"     },
-  { label: "NORMAL",    path: "/samples/normal9.jpg",     name: "Normal Sample 9"     },
-  { label: "NORMAL",    path: "/samples/normal10.jpg",    name: "Normal Sample 10"    },
 ]
 
-// Pick 8 random samples — recalculated once per page load
-function pickRandom(pool, n = 8) {
+// Pick 4 random samples — recalculated once per page load
+function pickRandom(pool, n = 4) {
   return [...pool].sort(() => Math.random() - 0.5).slice(0, n)
 }
 
@@ -46,7 +40,7 @@ export default function App() {
   const inputRef                = useRef(null)
 
   // Random 4 samples, fixed for this page session
-  const displayedSamples = useMemo(() => pickRandom(SAMPLE_POOL, 8), [])
+  const displayedSamples = useMemo(() => pickRandom(SAMPLE_POOL, 4), [])
 
   // ── File handling ──────────────────────────────────────────
   const handleFile = (f) => {
@@ -65,15 +59,16 @@ export default function App() {
   // ── Load sample image (local public/ files — no CORS issues) ──
   const loadSample = async (sample) => {
     setResult(null)
-    setPreview(sample.path)
     setLoading(true)
     try {
-      const res  = await fetch(sample.path)
+      const res = await fetch(sample.path)
+      if (!res.ok) throw new Error(`Image not found (${res.status}): ${sample.path}`)
       const blob = await res.blob()
       const f    = new File([blob], sample.name + ".jpg", { type: "image/jpeg" })
       setFile(f)
-    } catch {
-      alert("Failed to load sample image. Make sure images exist in public/samples/")
+      setPreview(URL.createObjectURL(blob))
+    } catch (err) {
+      alert("Failed to load sample: " + err.message)
     } finally {
       setLoading(false)
     }
