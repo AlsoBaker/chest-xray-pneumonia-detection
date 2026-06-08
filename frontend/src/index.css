@@ -7,8 +7,8 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #0a1410;
-  color: #e0f0e8;
+  background: #0d0618;
+  color: #f0e8ff;
   min-height: 100vh;
 }
 
@@ -28,33 +28,33 @@ body {
 .header h1 {
   font-size: 2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #7ecba7, #3a9e7e);
+  background: linear-gradient(135deg, #FBF5A7, #FF62BB, #B331F1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
 }
 
 .header p {
-  color: #5a9478;
+  color: #FF97D0;
   font-size: 1rem;
 }
 
 /* ── Upload Zone ──────────────────────────────────────── */
 .upload-zone {
-  border: 2px dashed #1e4030;
+  border: 2px dashed #2d1a52;
   border-radius: 16px;
   padding: 3rem 2rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: #132219;
+  background: #160d26;
   margin-bottom: 2rem;
 }
 
 .upload-zone:hover,
 .upload-zone.dragging {
-  border-color: #3a9e7e;
-  background: #1b3d2a;
+  border-color: #B331F1;
+  background: #1e1035;
 }
 
 .upload-zone .icon {
@@ -65,28 +65,28 @@ body {
 .upload-zone h3 {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: #e0f0e8;
+  color: #f0e8ff;
 }
 
 .upload-zone p {
-  color: #3a6350;
+  color: #7b4f9e;
   font-size: 0.9rem;
 }
 
 .upload-btn {
   margin-top: 1rem;
   padding: 0.6rem 1.5rem;
-  background: #1b6b52;
+  background: linear-gradient(135deg, #FF62BB, #B331F1);
   border: none;
   border-radius: 8px;
-  color: #e0f0e8;
+  color: white;
   font-weight: 600;
   cursor: pointer;
   font-size: 0.95rem;
-  transition: background 0.2s;
+  transition: opacity 0.2s;
 }
 
-.upload-btn:hover { background: #3a9e7e; }
+.upload-btn:hover { opacity: 0.85; }
 
 /* ── Results Grid ─────────────────────────────────────── */
 .results-grid {
@@ -98,17 +98,17 @@ body {
 
 /* ── Cards ────────────────────────────────────────────── */
 .card {
-  background: #132219;
+  background: #160d26;
   border-radius: 16px;
   padding: 1.5rem;
-  border: 1px solid #1e4030;
+  border: 1px solid #2d1a52;
 }
 
 .card h3 {
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #3a6350;
+  color: #7b4f9e;
   margin-bottom: 1rem;
 }
 
@@ -120,10 +120,10 @@ body {
 }
 
 .result-label.pneumonia { color: #f87171; }
-.result-label.normal    { color: #7ecba7; }
+.result-label.normal    { color: #4ade80; }
 
 .confidence-bar-wrap {
-  background: #0a1410;
+  background: #0d0618;
   border-radius: 99px;
   height: 10px;
   margin: 1rem 0;
@@ -137,17 +137,17 @@ body {
 }
 
 .confidence-bar.pneumonia { background: linear-gradient(90deg, #f87171, #ef4444); }
-.confidence-bar.normal    { background: linear-gradient(90deg, #7ecba7, #3a9e7e); }
+.confidence-bar.normal    { background: linear-gradient(90deg, #4ade80, #22c55e); }
 
 .confidence-text {
   font-size: 1.1rem;
-  color: #5a9478;
+  color: #FF97D0;
 }
 
 .confidence-text span {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #e0f0e8;
+  color: #FBF5A7;
 }
 
 /* ── Metrics Card ─────────────────────────────────────── */
@@ -158,7 +158,7 @@ body {
 }
 
 .metric-item {
-  background: #0a1410;
+  background: #0d0618;
   border-radius: 10px;
   padding: 0.75rem;
   text-align: center;
@@ -167,12 +167,12 @@ body {
 .metric-value {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #7ecba7;
+  color: #FF62BB;
 }
 
 .metric-label {
   font-size: 0.75rem;
-  color: #3a6350;
+  color: #7b4f9e;
   margin-top: 0.2rem;
 }
 
@@ -199,8 +199,8 @@ body {
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #1e4030;
-  border-top-color: #3a9e7e;
+  border: 4px solid #2d1a52;
+  border-top-color: #B331F1;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 1rem;
@@ -210,12 +210,12 @@ body {
 
 /* ── Warning Banner ───────────────────────────────────── */
 .warning {
-  background: #0f1f18;
-  border: 1px solid #1e4030;
+  background: #160d26;
+  border: 1px solid #2d1a52;
   border-radius: 10px;
   padding: 0.75rem 1rem;
   font-size: 0.85rem;
-  color: #5a9478;
+  color: #FF97D0;
   margin-bottom: 1.5rem;
   text-align: center;
 }
@@ -225,10 +225,10 @@ body {
   display: block;
   width: 100%;
   padding: 0.85rem;
-  background: #132219;
-  border: 1px solid #1e4030;
+  background: #160d26;
+  border: 1px solid #2d1a52;
   border-radius: 10px;
-  color: #5a9478;
+  color: #7b4f9e;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
@@ -236,8 +236,8 @@ body {
 }
 
 .reset-btn:hover {
-  border-color: #3a9e7e;
-  color: #7ecba7;
+  border-color: #B331F1;
+  color: #FF97D0;
 }
 
 /* ── Main layout — side by side ──────────────────────── */
@@ -256,22 +256,22 @@ body {
 .sample-panel {
   width: 220px;
   flex-shrink: 0;
-  background: #132219;
+  background: #160d26;
   border-radius: 12px;
   padding: 1rem;
-  border: 1px solid #1e4030;
+  border: 1px solid #2d1a52;
 }
 
 .sample-title {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #e0f0e8;
+  color: #f0e8ff;
   margin: 0 0 0.25rem 0;
 }
 
 .sample-subtitle {
   font-size: 0.75rem;
-  color: #3a6350;
+  color: #7b4f9e;
   margin: 0 0 1rem 0;
 }
 
@@ -303,11 +303,11 @@ body {
 }
 
 .sample-card.normal {
-  border-color: #3a9e7e66;
+  border-color: #22c55e66;
 }
 
 .sample-card.normal:hover {
-  border-color: #7ecba7;
+  border-color: #22c55e;
 }
 
 .sample-card img {
@@ -335,15 +335,15 @@ body {
 }
 
 .sample-card.normal .sample-badge {
-  background: #3a9e7e;
-  color: #e0f0e8;
+  background: #22c55e;
+  color: #052e16;
 }
 
 .sample-name {
   font-size: 0.7rem;
-  color: #5a9478;
+  color: #FF97D0;
   padding: 4px 6px;
-  background: #0a1410;
+  background: #0d0618;
 }
 
 /* ── Responsive — stack on mobile ─────────────────────── */
