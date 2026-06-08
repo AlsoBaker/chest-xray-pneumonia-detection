@@ -250,7 +250,7 @@ export default function App() {
 
         {/* ── Sample Images Panel (RIGHT) ── */}
         <div className="sample-panel">
-          <h3 className="sample-title">🩻 Try a Sample</h3>
+          <h3 className="sample-title">Try a Sample</h3>
           <p className="sample-subtitle">Click any image to load it</p>
           <div className="sample-grid">
             {displayedSamples.map((sample, i) => (
