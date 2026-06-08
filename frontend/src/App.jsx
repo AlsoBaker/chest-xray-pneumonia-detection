@@ -2,33 +2,36 @@ import { useState, useRef, useMemo } from "react"
 import axios from "axios"
 import "./index.css"
 
-// ── Pool of 20 images (10 pneumonia + 10 normal) — stored in public/samples/ ──
-const SAMPLE_POOL = [
-  { label: "PNEUMONIA", path: "/samples/pneumonia1.jpg",  name: "Pneumonia Sample 1"  },
-  { label: "PNEUMONIA", path: "/samples/pneumonia2.jpg",  name: "Pneumonia Sample 2"  },
-  { label: "PNEUMONIA", path: "/samples/pneumonia3.jpg",  name: "Pneumonia Sample 3"  },
-  { label: "PNEUMONIA", path: "/samples/pneumonia4.jpg",  name: "Pneumonia Sample 4"  },
-  { label: "PNEUMONIA", path: "/samples/pneumonia5.jpg",  name: "Pneumonia Sample 5"  },
-  { label: "PNEUMONIA", path: "/samples/pneumonia6.jpg",  name: "Pneumonia Sample 6"  },
-  { label: "PNEUMONIA", path: "/samples/pneumonia7.jpg",  name: "Pneumonia Sample 7"  },
-  { label: "PNEUMONIA", path: "/samples/pneumonia8.jpg",  name: "Pneumonia Sample 8"  },
-  { label: "PNEUMONIA", path: "/samples/pneumonia9.jpg",  name: "Pneumonia Sample 9"  },
-  { label: "PNEUMONIA", path: "/samples/pneumonia10.jpg", name: "Pneumonia Sample 10" },
-  { label: "NORMAL",    path: "/samples/normal1.jpg",     name: "Normal Sample 1"     },
-  { label: "NORMAL",    path: "/samples/normal2.jpg",     name: "Normal Sample 2"     },
-  { label: "NORMAL",    path: "/samples/normal3.jpg",     name: "Normal Sample 3"     },
-  { label: "NORMAL",    path: "/samples/normal4.jpg",     name: "Normal Sample 4"     },
-  { label: "NORMAL",    path: "/samples/normal5.jpg",     name: "Normal Sample 5"     },
-  { label: "NORMAL",    path: "/samples/normal6.jpg",     name: "Normal Sample 6"     },
-  { label: "NORMAL",    path: "/samples/normal7.jpg",     name: "Normal Sample 7"     },
-  { label: "NORMAL",    path: "/samples/normal8.jpg",     name: "Normal Sample 8"     },
-  { label: "NORMAL",    path: "/samples/normal9.jpg",     name: "Normal Sample 9"     },
-  { label: "NORMAL",    path: "/samples/normal10.jpg",    name: "Normal Sample 10"    },
+// ── Pool of images stored in public/samples/ (all .jpeg) ──
+const PNEUMONIA_POOL = [
+  { label: "PNEUMONIA", path: "/samples/pneumonia1.jpeg",  name: "Pneumonia Sample 1"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia2.jpeg",  name: "Pneumonia Sample 2"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia3.jpeg",  name: "Pneumonia Sample 3"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia5.jpeg",  name: "Pneumonia Sample 5"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia6.jpeg",  name: "Pneumonia Sample 6"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia7.jpeg",  name: "Pneumonia Sample 7"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia8.jpeg",  name: "Pneumonia Sample 8"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia9.jpeg",  name: "Pneumonia Sample 9"  },
+  { label: "PNEUMONIA", path: "/samples/pneumonia10.jpeg", name: "Pneumonia Sample 10" },
 ]
 
-// Pick 4 random samples — recalculated once per page load
-function pickRandom(pool, n = 4) {
-  return [...pool].sort(() => Math.random() - 0.5).slice(0, n)
+const NORMAL_POOL = [
+  { label: "NORMAL", path: "/samples/normal1.jpeg",  name: "Normal Sample 1"  },
+  { label: "NORMAL", path: "/samples/normal2.jpeg",  name: "Normal Sample 2"  },
+  { label: "NORMAL", path: "/samples/normal3.jpeg",  name: "Normal Sample 3"  },
+  { label: "NORMAL", path: "/samples/normal4.jpeg",  name: "Normal Sample 4"  },
+  { label: "NORMAL", path: "/samples/normal5.jpeg",  name: "Normal Sample 5"  },
+  { label: "NORMAL", path: "/samples/normal6.jpeg",  name: "Normal Sample 6"  },
+  { label: "NORMAL", path: "/samples/normal7.jpeg",  name: "Normal Sample 7"  },
+  { label: "NORMAL", path: "/samples/normal8.jpeg",  name: "Normal Sample 8"  },
+  { label: "NORMAL", path: "/samples/normal9.jpeg",  name: "Normal Sample 9"  },
+  { label: "NORMAL", path: "/samples/normal10.jpeg", name: "Normal Sample 10" },
+]
+
+// Always pick 2 pneumonia + 2 normal — guaranteed balance
+function pickBalanced() {
+  const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5)
+  return [...shuffle(PNEUMONIA_POOL).slice(0, 2), ...shuffle(NORMAL_POOL).slice(0, 2)]
 }
 
 export default function App() {
@@ -39,8 +42,8 @@ export default function App() {
   const [dragging, setDragging] = useState(false)
   const inputRef                = useRef(null)
 
-  // Random 4 samples, fixed for this page session
-  const displayedSamples = useMemo(() => pickRandom(SAMPLE_POOL, 4), [])
+  // 2 pneumonia + 2 normal, randomised once per page load
+  const displayedSamples = useMemo(() => pickBalanced(), [])
 
   // ── File handling ──────────────────────────────────────────
   const handleFile = (f) => {
